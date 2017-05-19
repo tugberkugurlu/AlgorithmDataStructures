@@ -4,24 +4,19 @@ namespace GraphDfsBfs
 {
     public class Node
     {
-        private sealed class ValueEqualityComparer : IEqualityComparer<Node>
+        public Node(int value)
         {
-            public bool Equals(Node x, Node y)
-            {
-                if (ReferenceEquals(x, y)) return true;
-                if (ReferenceEquals(x, null)) return false;
-                if (ReferenceEquals(y, null)) return false;
-                if (x.GetType() != y.GetType()) return false;
-                return x.Value == y.Value;
-            }
-
-            public int GetHashCode(Node obj)
-            {
-                return obj.Value;
-            }
+            Value = value;
+            Nodes = new LinkedList<Node>();
         }
 
-        public static IEqualityComparer<Node> ValueComparer { get; } = new ValueEqualityComparer();
+        public int Value { get; }
+        public LinkedList<Node> Nodes { get; }
+
+        public void AddEdge(Node node)
+        {
+            Nodes.AddLast(node);
+        }
 
         protected bool Equals(Node other)
         {
@@ -41,11 +36,22 @@ namespace GraphDfsBfs
             return Value;
         }
 
-        public Node(int value) => Value = value;
+        public static IEqualityComparer<Node> ValueComparer { get; } = new ValueEqualityComparer();
+        private sealed class ValueEqualityComparer : IEqualityComparer<Node>
+        {
+            public bool Equals(Node x, Node y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(x, null)) return false;
+                if (ReferenceEquals(y, null)) return false;
+                if (x.GetType() != y.GetType()) return false;
+                return x.Value == y.Value;
+            }
 
-        public LinkedList<Node> Nodes { get; } = new LinkedList<Node>();
-        public int Value { get; }
-
-        public void AddEdge(Node node) => Nodes.AddLast(node);
+            public int GetHashCode(Node obj)
+            {
+                return obj.Value;
+            }
+        }
     }
 }
