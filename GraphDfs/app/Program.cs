@@ -21,7 +21,7 @@ namespace app
 
                 /*  
                     0---1
-                    |  /|\
+                    |  /|\      
                     | / | 2
                     |/  |/ 
                     4---3
@@ -29,6 +29,38 @@ namespace app
             };
 
             System.Console.WriteLine(HasPathDfs(undirectedGraph, 4, 3));
+            System.Console.WriteLine(string.Join(", ", TopologySortDfs(undirectedGraph, 4)));
+        }
+
+        public static int[] TopologySortDfs(int[,] undirectedGraph, int root) 
+        {
+            var rootNode = undirectedGraph.GetNode(root);
+            var visitJournal = new HashSet<int>();
+            var sortedList = new List<int>();
+            TopologySortDfs(rootNode, root, undirectedGraph, visitJournal, sortedList);
+
+            return sortedList.ToArray();
+        }
+
+        public static void TopologySortDfs(int[] rootNode, int root, int[,] undirectedGraph, HashSet<int> visitJournal, List<int> sortedList) 
+        {
+            if(visitJournal.Contains(root)) 
+            {
+                return;
+            }
+
+            visitJournal.Add(root);
+
+            for (int i = 0; i < rootNode.Length; i++)
+            {
+                if(rootNode[i] != 0)
+                {
+                    var childNode = undirectedGraph.GetNode(i);
+                    TopologySortDfs(childNode, i, undirectedGraph, visitJournal, sortedList);
+                }
+            }
+
+            sortedList.Add(root);  
         }
 
         public static bool HasPathDfs(int[,] undirectedGraph, int source, int destination) 
@@ -53,7 +85,7 @@ namespace app
             }
 
             visitJournal.Add(source);
-            if(source == destination) 
+            if(sourceNode[destination] == 1) 
             {
                 return true;
             }
@@ -74,8 +106,8 @@ namespace app
 
         public static int[] GetNode(this int[,] undirectedGraph, int node) 
         {
-            var nodeArray = new int[undirectedGraph.Rank];
-            for (int i = 0; i < undirectedGraph.Rank; i++)
+            var nodeArray = new int[undirectedGraph.GetLength(0)];
+            for (int i = 0; i < undirectedGraph.GetLength(0); i++)
             {
                 nodeArray[i] = undirectedGraph[node, i];
             }
